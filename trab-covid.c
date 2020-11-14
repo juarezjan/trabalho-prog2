@@ -6,33 +6,33 @@ typedef struct
     int dia;
     int mes;
     int ano;
-} dma;
+} data;
 
 typedef struct
 {
-    dma cadastro;
-    dma obito;
+    data cadastro;
+    data obito;
     int classificacao;
     char municipio[25];
-    dma idade;
-    int comPulmao;
-    int comCardio;
-    int comRenal;
-    int comDiabetes;
-    int comTabagismo;
-    int comObesidade;
-    int ficouInternado;
+    data idade;
+    int com_pulmao;
+    int com_cardio;
+    int com_renal;
+    int com_diabetes;
+    int com_tabagismo;
+    int com_obesidade;
+    int ficou_internado;
 } caso;
 
-caso leCaso(FILE *arq);
-dma leDma(FILE *arq);
-int simOuNao(FILE *arq);
-void imprimeCasos(caso vetor[]);
+caso le_caso(FILE *arq);
+data le_data(FILE *arq);
+int sim_ou_nao(FILE *arq);
+void imprime_casos(caso vetor[]);
 
 int main()
 {
     caso *ptrCasos;
-    ptrCasos = (caso*)malloc(202362*sizeof(caso));
+    ptrCasos = malloc(202362 * sizeof (caso));
 
     FILE *arquivo = fopen("covid19ES.csv", "r");
 
@@ -42,23 +42,23 @@ int main()
     int i;
     for (i = 0; i < 202362; i++)
     {
-        ptrCasos[i] = leCaso(arquivo);
+        ptrCasos[i] = le_caso(arquivo);
     }
     fclose(arquivo);
 
     printf("%s", cabecalho);
-    imprimeCasos(ptrCasos);
+    imprime_casos(ptrCasos);
 
     free(ptrCasos);
     return 0;
 }
 
-caso leCaso(FILE *arq)
+caso le_caso(FILE *arq)
 {
     // lê uma linha do csv
     caso temp;
-    temp.cadastro = leDma(arq);
-    temp.obito = leDma(arq);
+    temp.cadastro = le_data(arq);
+    temp.obito = le_data(arq);
     // converte a classificação em um int
     int i; char c;
     for (i = 0; c = fgetc(arq); i++)
@@ -80,16 +80,27 @@ caso leCaso(FILE *arq)
         else temp.municipio[i] = c;
     }
     // lê a idade
-    fscanf(arq, "\"%d anos, %d meses, %d dias\",", &temp.idade.ano, &temp.idade.mes, &temp.idade.dia);
+    fscanf(arq, "\"%d anos, %d", &temp.idade.ano, &temp.idade.mes);
+    if (temp.idade.mes >= 0 || temp.idade.ano == -1)
+    {
+        fscanf(arq, " meses, %d dias\",", &temp.idade.dia);
+    }
+    else
+    {
+        while (c = fgetc(arq))
+        {
+            if (c == ',') break;
+        }
+    }
 
-    temp.comPulmao = simOuNao(arq);
-    temp.comCardio = simOuNao(arq);
-    temp.comRenal = simOuNao(arq);
-    temp.comDiabetes = simOuNao(arq);
-    temp.comTabagismo = simOuNao(arq);
-    temp.comObesidade = simOuNao(arq);
+    temp.com_pulmao = sim_ou_nao(arq);
+    temp.com_cardio = sim_ou_nao(arq);
+    temp.com_renal = sim_ou_nao(arq);
+    temp.com_diabetes = sim_ou_nao(arq);
+    temp.com_tabagismo = sim_ou_nao(arq);
+    temp.com_obesidade = sim_ou_nao(arq);
 
-    // lê "ficouInternado"
+    // lê "ficou_internado"
     // Sim -> 1 / Não -> 2 / Não informado -> 3
     c = fgetc(arq); i = 0;
     char d;
@@ -98,22 +109,23 @@ caso leCaso(FILE *arq)
         if (d == '\n' || d == EOF) break;
         i++;
     }
-    if (c == 'S') temp.ficouInternado = 1;
-    else if (i < 13) temp.ficouInternado = 2;
-    else temp.ficouInternado = 3;
+    if (c == 'S') temp.ficou_internado = 1;
+    else if (c == 'I') temp.ficou_internado = 4;
+    else if (i < 13) temp.ficou_internado = 2;
+    else temp.ficou_internado = 3;
 
     return temp;
 }
 
-dma leDma(FILE *arq)
+data le_data(FILE *arq)
 {
     // lê dia, mês e ano
-    dma temp;
+    data temp;
     fscanf(arq, "%d-%d-%d,", &temp.ano, &temp.mes, &temp.dia);
     return temp;
 }
 
-int simOuNao(FILE *arq)
+int sim_ou_nao(FILE *arq)
 {
     // "Sim" -> 1 / "Não" -> 0
     char c, d;
@@ -123,10 +135,11 @@ int simOuNao(FILE *arq)
         if (d == ',') break;
     }
     if (c == 'S') return 1;
+    else if (c == '-') return 2;
     else return 0;
 }
 
-void imprimeCasos(caso vetor[])
+void imprime_casos(caso vetor[])
 {
     int i;
     for (i = 0; i < 202362; i++)
@@ -153,28 +166,37 @@ void imprimeCasos(caso vetor[])
 
         printf("%s,", vetor[i].municipio);
 
-        printf("\"%d anos, %d meses, %d dias\",", vetor[i].idade.ano, vetor[i].idade.mes, vetor[i].idade.dia);
+        if (vetor[i].idade.mes >= 0) printf("\"%d anos, %d meses, %d dias\",", vetor[i].idade.ano, vetor[i].idade.mes, vetor[i].idade.dia);
+        else if (vetor[i].idade.mes == -1) printf("\"%d anos, %d meses, %d dias\",", vetor[i].idade.ano, vetor[i].idade.mes, vetor[i].idade.dia);
+        else printf("\"%d anos, %d dias\",", vetor[i].idade.ano, vetor[i].idade.mes);
 
-        if (vetor[i].comPulmao == 1) printf("Sim,");
+        if (vetor[i].com_pulmao == 1) printf("Sim,");
+        else if (vetor[i].com_pulmao == 2) printf("-,");
         else printf("Não,");
 
-        if (vetor[i].comCardio == 1) printf("Sim,");
+        if (vetor[i].com_cardio == 1) printf("Sim,");
+        else if (vetor[i].com_cardio == 2) printf("-,");
         else printf("Não,");
 
-        if (vetor[i].comRenal == 1) printf("Sim,");
+        if (vetor[i].com_renal == 1) printf("Sim,");
+        else if (vetor[i].com_renal == 2) printf("-,");
         else printf("Não,");
 
-        if (vetor[i].comDiabetes == 1) printf("Sim,");
+        if (vetor[i].com_diabetes == 1) printf("Sim,");
+        else if (vetor[i].com_diabetes == 2) printf("-,");
         else printf("Não,");
 
-        if (vetor[i].comTabagismo == 1) printf("Sim,");
+        if (vetor[i].com_tabagismo == 1) printf("Sim,");
+        else if (vetor[i].com_tabagismo == 2) printf("-,");
         else printf("Não,");
 
-        if (vetor[i].comObesidade == 1) printf("Sim,");
+        if (vetor[i].com_obesidade == 1) printf("Sim,");
+        else if (vetor[i].com_obesidade == 2) printf("-,");
         else printf("Não,");
 
-        if (vetor[i].ficouInternado == 1) printf("Sim\n");
-        else if (vetor[i].ficouInternado == 2) printf("Não\n");
+        if (vetor[i].ficou_internado == 1) printf("Sim\n");
+        else if (vetor[i].ficou_internado == 2) printf("Não\n");
+        else if (vetor[i].ficou_internado == 4) printf("Ignorado\n");
         else printf("Não Informado\n");
     }
 }

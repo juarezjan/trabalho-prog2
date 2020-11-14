@@ -1,7 +1,7 @@
-### funções a implementar:
+### Funções a implementar:
 
-_As saídas deverão ser escritas em arquivos._
-_Os arquivos de teste serão lidos da entrada padrão._
+As saídas deverão ser escritas em arquivos.
+Os arquivos de teste serão lidos da entrada padrão.
 
 - ~~ler o arquivo csv~~
 - filtro de datas
