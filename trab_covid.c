@@ -60,18 +60,17 @@ t_caso le_caso(FILE *p_arq)
     temp.cadastro = le_data(p_arq);
     temp.obito = le_data(p_arq);
     // converte a classificação em um int
-    int i; char c;
-    for (i = 0; c = fgetc(p_arq); i++)
+    // "Confirmados" -> 1 / "Descartados" -> 2 / "Suspeito" -> 3
+    int i;
+    char c, d;
+    c = fgetc(p_arq);
+    while (d = fgetc(p_arq))
     {
-        if (c == ',') break;
-        else if (i == 0)
-        {
-            if (c == 'C') temp.classificacao = 1;
-            else if (c == 'D') temp.classificacao = 2;
-            else temp.classificacao = 3;
-        }
-        else continue;
+        if (d == ',') break;
     }
+    if (c == 'C') temp.classificacao = 1;
+    else if (c == 'D') temp.classificacao = 2;
+    else temp.classificacao = 3;
     // lê o nome do município
     for (i = 0; i < 25; i++) temp.municipio[i] = '\0';
     for (i = 0; c = fgetc(p_arq); i++)
@@ -87,9 +86,9 @@ t_caso le_caso(FILE *p_arq)
     }
     else
     {
-        while (c = fgetc(p_arq))
+        while (d = fgetc(p_arq))
         {
-            if (c == ',') break;
+            if (d == ',') break;
         }
     }
 
@@ -101,9 +100,9 @@ t_caso le_caso(FILE *p_arq)
     temp.com_obesidade = sim_ou_nao(p_arq);
 
     // lê "ficou_internado"
-    // Sim -> 1 / Não -> 2 / Não informado -> 3
-    c = fgetc(p_arq); i = 0;
-    char d;
+    // "Sim" -> 1 / "Não" -> 2 / "Não informado" -> 3 / "Ignorado" -> 4
+    c = fgetc(p_arq);
+    i = 0;
     while (d = fgetc(p_arq))
     {
         if (d == '\n' || d == EOF) break;
@@ -127,7 +126,7 @@ t_data le_data(FILE *p_arq)
 
 int sim_ou_nao(FILE *p_arq)
 {
-    // "Sim" -> 1 / "Não" -> 0
+    // "Sim" -> 1 / "Não" -> 0 / "-" -> 2
     char c, d;
     c = fgetc(p_arq);
     while (d = fgetc(p_arq))
