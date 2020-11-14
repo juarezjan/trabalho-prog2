@@ -31,8 +31,8 @@ void imprime_casos(caso vetor[]);
 
 int main()
 {
-    caso *ptrCasos;
-    ptrCasos = malloc(202362 * sizeof (caso));
+    caso *ptr_casos;
+    ptr_casos = malloc(202362 * sizeof (caso));
 
     FILE *arquivo = fopen("covid19ES.csv", "r");
 
@@ -42,14 +42,14 @@ int main()
     int i;
     for (i = 0; i < 202362; i++)
     {
-        ptrCasos[i] = le_caso(arquivo);
+        ptr_casos[i] = le_caso(arquivo);
     }
     fclose(arquivo);
 
     printf("%s", cabecalho);
-    imprime_casos(ptrCasos);
+    imprime_casos(ptr_casos);
 
-    free(ptrCasos);
+    free(ptr_casos);
     return 0;
 }
 
