@@ -6,15 +6,15 @@ typedef struct
     int dia;
     int mes;
     int ano;
-} data;
+} t_data;
 
 typedef struct
 {
-    data cadastro;
-    data obito;
+    t_data cadastro;
+    t_data obito;
     int classificacao;
     char municipio[25];
-    data idade;
+    t_data idade;
     int com_pulmao;
     int com_cardio;
     int com_renal;
@@ -22,17 +22,17 @@ typedef struct
     int com_tabagismo;
     int com_obesidade;
     int ficou_internado;
-} caso;
+} t_caso;
 
-caso le_caso(FILE *arq);
-data le_data(FILE *arq);
+t_caso le_caso(FILE *arq);
+t_data le_data(FILE *arq);
 int sim_ou_nao(FILE *arq);
-void imprime_casos(caso vetor[]);
+void imprime_casos(t_caso vetor[]);
 
 int main()
 {
-    caso *ptr_casos;
-    ptr_casos = malloc(202362 * sizeof (caso));
+    t_caso *ptr_casos;
+    ptr_casos = malloc(202362 * sizeof (t_caso));
 
     FILE *arquivo = fopen("covid19ES.csv", "r");
 
@@ -53,10 +53,10 @@ int main()
     return 0;
 }
 
-caso le_caso(FILE *arq)
+t_caso le_caso(FILE *arq)
 {
     // lê uma linha do csv
-    caso temp;
+    t_caso temp;
     temp.cadastro = le_data(arq);
     temp.obito = le_data(arq);
     // converte a classificação em um int
@@ -117,10 +117,10 @@ caso le_caso(FILE *arq)
     return temp;
 }
 
-data le_data(FILE *arq)
+t_data le_data(FILE *arq)
 {
     // lê dia, mês e ano
-    data temp;
+    t_data temp;
     fscanf(arq, "%d-%d-%d,", &temp.ano, &temp.mes, &temp.dia);
     return temp;
 }
@@ -139,7 +139,7 @@ int sim_ou_nao(FILE *arq)
     else return 0;
 }
 
-void imprime_casos(caso vetor[])
+void imprime_casos(t_caso vetor[])
 {
     int i;
     for (i = 0; i < 202362; i++)
