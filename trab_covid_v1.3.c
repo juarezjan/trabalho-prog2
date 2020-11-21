@@ -71,6 +71,8 @@ int main()
     scanf("%d", &item3);
     ordem_alfabetica(p_casos, item3, saida);
 
+    printf("string: %s\n", saida);
+
     free(p_casos);
     return 0;
 }
@@ -224,9 +226,11 @@ void ordem_alfabetica(t_caso vetor[], int n, char string[])
     }
 
     // cria a pasta e escreve o arquivo de saída
-    mkdir(string, 0777);
-    strcat(string, "item3.txt");
-    FILE *p_saida = fopen(string, "w");
+    char string_copia[50];
+    strcpy(string_copia, string);
+    mkdir(string_copia, 0777);
+    strcat(string_copia, "item3.txt");
+    FILE *p_saida = fopen(string_copia, "w");
     for (i = 0; i < num_municipios; i++)
     {
         if (lista[i].total > n)
@@ -237,7 +241,7 @@ void ordem_alfabetica(t_caso vetor[], int n, char string[])
     fclose(p_saida);
 }
 
-//Verifica se é bissexto
+// verifica se é bissexto
 int bissexto(t_data data)
 {
     if(data.ano % 4 == 0 && (data.ano % 100 != 0 || data.ano % 400 == 0))
@@ -246,11 +250,12 @@ int bissexto(t_data data)
     }
     return FALSE;
 }
-//Avança um dia
+
+// avança um dia
 t_data avanca_dia(t_data data)
 {
     data.dia++;
-    //Se o mes tem 31 dias
+    // se o mes tem 31 dias
     if(data.mes == 1 || data.mes == 3 || data.mes == 5 || data.mes == 7 || data.mes == 8 || data.mes == 10 || data.mes == 12)
     {
         if(data.dia == 32)
@@ -264,7 +269,7 @@ t_data avanca_dia(t_data data)
             }
         }
     }
-    else //Se o mes tem 30 / 29 / 28 dias
+    else // se o mes tem 30, 29 ou 28 dias
     {
         if(data.mes == 2)
         {
@@ -285,7 +290,7 @@ t_data avanca_dia(t_data data)
                 }
             }
         }
-        else //Meses com 30 dias
+        else // meses com 30 dias
         {
             if(data.dia == 31)
             {
@@ -297,8 +302,8 @@ t_data avanca_dia(t_data data)
     return data;
 }
 
-//Verifica se uma data está entre duas datas (intervalo fechado)
-//Atenção para a ordem das datas
+// verifica se uma data está entre duas datas (intervalo fechado)
+// atenção para a ordem das datas
 int verifica_data(t_data data, t_data data_inicial, t_data data_final)
 {
     while(data_inicial.dia != data_final.dia || data_inicial.mes != data_final.mes || data_inicial.ano != data_final.ano)
