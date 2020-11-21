@@ -71,8 +71,6 @@ int main()
     scanf("%d", &item3);
     ordem_alfabetica(p_casos, item3, saida);
 
-    printf("string: %s\n", saida);
-
     free(p_casos);
     return 0;
 }
