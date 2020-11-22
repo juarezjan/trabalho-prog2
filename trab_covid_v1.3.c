@@ -304,6 +304,7 @@ t_data avanca_dia(t_data data)
 // atenção para a ordem das datas
 int verifica_data(t_data data, t_data data_inicial, t_data data_final)
 {
+    if(data.dia == data_final.dia && data.mes == data_final.mes && data.ano == data_final.ano)  return TRUE;
     while(data_inicial.dia != data_final.dia || data_inicial.mes != data_final.mes || data_inicial.ano != data_final.ano)
     {
         if(data.dia == data_inicial.dia && data.mes == data_inicial.mes && data.ano == data_inicial.ano)
