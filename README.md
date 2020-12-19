@@ -1,4 +1,6 @@
-### Funções a implementar:
+Trabalho final de Programação II. Realiza algumas análises simples com os dados oficiais do Governo do Espírito Santo sobre a epidemia de Covid-19. Uma descrição completa pode ser encontrada no arquivo PDF que se encontra neste repositório.
+
+###### Funções a implementar:
 
 Os arquivos de teste serão lidos da entrada padrão.
 As saídas deverão ser escritas em arquivos.
